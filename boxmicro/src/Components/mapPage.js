@@ -1,4 +1,5 @@
 import React from "react";
+import GOOGLE_API_KEY from "../Keys/keys";
 import {
 	Map,
 	InfoWindow,
@@ -334,8 +335,6 @@ class DrawingMap extends React.Component {
 }
 
 export default GoogleApiWrapper({
-	apiKey: "AIzaSyAKWE1JinLb5yLSoxHiEjiq1CMuOqbx_s4",
+	apiKey: GOOGLE_API_KEY,
 	libraries: ["drawing", "places"]
 })(DrawingMap);
-
-// AIzaSyAKWE1JinLb5yLSoxHiEjiq1CMuOqbx_s4
