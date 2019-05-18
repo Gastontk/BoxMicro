@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
 
@@ -14,13 +14,15 @@ app.use(express.static(path.join(__dirname, "../build")));
 app.use(express.static(path.join(__dirname, "/src")));
 
 app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 const Todo = mongoose.model("Todo", {
 	text: String,
 	complete: Boolean
 });
 const Polygon = mongoose.model("Polygon", {
-	coords: []
+	coords: [],
+	legal: Boolean
 });
 
 //temp route for getting setup
@@ -33,9 +35,10 @@ app.get("/", function(req, res) {
 });
 
 app.post("/gps", function(req, res) {
-	console.log("param", req.body.data.data);
+	console.log("param", req.body);
 	let polygon = new Polygon({
-		coords: req.body.data.data
+		coords: req.body.points,
+		legal: req.body.legal
 	});
 	polygon.save((err, data) => {
 		if (err) {
@@ -50,7 +53,7 @@ app.post("/gps", function(req, res) {
 app.get("/gps", async (req, res) => {
 	let polygons = await Polygon.find();
 	console.log("coords returned for get", polygons);
-	res.send({data: polygons});
+	res.send({ data: polygons });
 });
 
 mongoose.connection.once("open", function() {

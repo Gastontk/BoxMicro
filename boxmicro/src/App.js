@@ -17,7 +17,7 @@ class App extends Component {
 			headers: {
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify({ data: { data } })
+			body: JSON.stringify(data)
 		});
 		console.log("response", servresp.data);
 	};

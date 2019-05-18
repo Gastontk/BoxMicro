@@ -13,7 +13,9 @@ import {
 class DrawingMap extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.markerProps = {};
+		this.isLegal = true;
 
 		this.initMap = this.initMap.bind(this);
 		this.markers = [];
@@ -44,7 +46,7 @@ class DrawingMap extends React.Component {
 			},
 			map: map
 		});
-		drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+		// drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
 
 		//search bar
 		// Create the search box and link it to the UI element.
@@ -55,11 +57,8 @@ class DrawingMap extends React.Component {
 		// Listen for the event fired when the user selects a prediction and retrieve
 		// more details for that place.
 
-		console.log("searchBox is ", searchBox);
-
 		var markers = [];
 		searchBox.addListener("places_changed", function() {
-			console.log("places changed.");
 			var places = searchBox.getPlaces();
 
 			if (places.length === 0) {
@@ -72,7 +71,6 @@ class DrawingMap extends React.Component {
 			});
 
 			markers = [];
-			console.log(places);
 			// For each place, get the icon, name and location.
 			var bounds = new google.maps.LatLngBounds();
 			places.forEach(function(place) {
@@ -169,7 +167,13 @@ class DrawingMap extends React.Component {
 							" feet";
 					}
 				});
-				this.props.sendPolygonToServer(points);
+
+				// console.log("legal.checked?", legal.checked);
+
+				this.props.sendPolygonToServer({
+					points: points,
+					legal: legal.checked
+				});
 			}
 
 			console.log("dimensionsString ", dimensionsString);
@@ -239,6 +243,7 @@ class DrawingMap extends React.Component {
 		/*events and listeners and blah blah*/
 
 		drawingManager.polygonOptions.fillColor = "#00FF00";
+		drawingManager.polygonOptions.fillOpacity = 0.8;
 
 		var legal = document.getElementById("isLegal");
 		legal.addEventListener("click", function() {
@@ -272,6 +277,8 @@ class DrawingMap extends React.Component {
 			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 			return earthRadiusKm * c;
 		};
+
+		//map polygons from server
 		let cleanedCoordinates = this.props.toBeMappedFromServer.map(pgn => {
 			console.log("pgn", pgn);
 			let myArray = [];
@@ -279,19 +286,26 @@ class DrawingMap extends React.Component {
 				console.log(point);
 				myArray.push({ lat: point[0], lng: point[1] });
 			});
-			myArray.push({ lat: pgn.coords[0][0], lng: pgn.coords[0][1] });
+			myArray.push({
+				lat: pgn.coords[0][0],
+				lng: pgn.coords[0][1]
+			});
+			myArray.push({ legal: pgn.legal });
+
 			return myArray;
 			// return {lat: pgn}
 		});
-		console.log(cleanedCoordinates);
+		console.log("cleaned Coordinates", cleanedCoordinates);
 		cleanedCoordinates.forEach(plygon => {
 			console.log("polygon", plygon);
+			let legal = plygon.pop();
+			console.log("legal is", legal.legal);
 
 			var mappedPolygon = new google.maps.Polygon({
 				path: plygon,
 				geodesic: true,
-				strokeColor: "#FF0000",
-				fillColor: '#FF0000',
+				strokeColor: "#00ff00",
+				fillColor: legal.legal ? "#ff0000" : "#00ff00",
 				strokeOpacity: 1.0,
 				strokeWeight: 2
 			});
