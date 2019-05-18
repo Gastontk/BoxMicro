@@ -16,9 +16,13 @@ class DrawingMap extends React.Component {
 		this.markerProps = {};
 
 		this.initMap = this.initMap.bind(this);
+		this.markers = [];
+		this.toMapData = this.props.toMapData;
+		console.log("I came from the server", this.props.toBeMappedFromServer);
 	}
 
 	initMap(mapProps, map) {
+		console.log("cooooooords", this.props.toBeMappedFromServer);
 		const { google } = mapProps;
 
 		const drawingManager = new google.maps.drawing.DrawingManager({
@@ -66,8 +70,9 @@ class DrawingMap extends React.Component {
 			markers.forEach(function(marker) {
 				marker.setMap(null);
 			});
-			markers = [];
 
+			markers = [];
+			console.log(places);
 			// For each place, get the icon, name and location.
 			var bounds = new google.maps.LatLngBounds();
 			places.forEach(function(place) {
@@ -107,7 +112,7 @@ class DrawingMap extends React.Component {
 		//polygon testing
 		let polygonArray = [];
 		let myMarkers = [];
-		drawingManager.addListener("polygoncomplete", function(polygon) {
+		drawingManager.addListener("polygoncomplete", polygon => {
 			//add a listener to the polygon so we can do things to it.
 			//
 			google.maps.event.addListener(polygon, "click", function(event) {
@@ -117,11 +122,12 @@ class DrawingMap extends React.Component {
 			});
 
 			var coordinates = polygon.getPath().getArray();
+			console.log("coordinates", coordinates);
 			polygonArray.push(polygon);
 			if (polygonArray.length > 1) {
 				console.log("changing previous polygon color");
-				polygonArray[polygonArray.length - 2].fillColor = "#ff00ff";
-				polygonArray[polygonArray.length - 2].setMap(null);
+				// polygonArray[polygonArray.length - 2].fillColor = "#ff00ff";
+				// polygonArray[polygonArray.length - 2].setMap(null);
 				setTimeout(function() {
 					polygonArray[polygonArray.length - 2].setMap(map);
 				}, 10);
@@ -129,13 +135,15 @@ class DrawingMap extends React.Component {
 			console.log("the polygon array includes: ", polygonArray);
 
 			// console.log(coordinates);
+
 			console.info("The coordinates that make up the polygon are");
 			//log each set up lat long for the polygon
+			let points = [];
 			var dimensionsString = "<br>DIMENSIONS: <br>";
 			if (coordinates.length > 1) {
 				coordinates.forEach(function(coord, index) {
 					console.log(coord.lat(), coord.lng(), index);
-
+					points.push([coordinates[index].lat(), coordinates[index].lng()]);
 					if (index < coordinates.length - 1) {
 						let distance = distanceInKmBetweenEarthCoordinates(
 							coordinates[index].lat(),
@@ -161,7 +169,9 @@ class DrawingMap extends React.Component {
 							" feet";
 					}
 				});
+				this.props.sendPolygonToServer(points);
 			}
+
 			console.log("dimensionsString ", dimensionsString);
 
 			//grab and attach value in square feet to the input box with id sqfeet
@@ -181,9 +191,10 @@ class DrawingMap extends React.Component {
 				map: map,
 				title: "Dimensions"
 			});
+			console.log("before markers", this.state);
 			myMarkers.push(marker);
-			console.log("markers", myMarkers);
 			marker.setMap(map);
+			console.log(this.props.toBeMappedFromServer);
 			setTimeout(function() {
 				marker.setMap(null);
 			}, 2000);
@@ -221,6 +232,7 @@ class DrawingMap extends React.Component {
 					infowindow.close();
 				}, 3000);
 			});
+
 			infowindow.open(Map, marker);
 		});
 
@@ -260,6 +272,31 @@ class DrawingMap extends React.Component {
 			var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 			return earthRadiusKm * c;
 		};
+		let cleanedCoordinates = this.props.toBeMappedFromServer.map(pgn => {
+			console.log("pgn", pgn);
+			let myArray = [];
+			pgn.coords.forEach(point => {
+				console.log(point);
+				myArray.push({ lat: point[0], lng: point[1] });
+			});
+			myArray.push({ lat: pgn.coords[0][0], lng: pgn.coords[0][1] });
+			return myArray;
+			// return {lat: pgn}
+		});
+		console.log(cleanedCoordinates);
+		cleanedCoordinates.forEach(plygon => {
+			console.log("polygon", plygon);
+
+			var mappedPolygon = new google.maps.Polygon({
+				path: plygon,
+				geodesic: true,
+				strokeColor: "#FF0000",
+				fillColor: '#FF0000',
+				strokeOpacity: 1.0,
+				strokeWeight: 2
+			});
+			mappedPolygon.setMap(map);
+		});
 	}
 
 	render() {
@@ -319,6 +356,8 @@ class DrawingMap extends React.Component {
 					google={window.google}
 					onReady={this.initMap}
 					onClick={this.onMapClicked}
+					sendPolygonToServer={this.sendPolygonToServer}
+					toMapData={this.data}
 					initialCenter={{ lat: 47.6062, lng: -122.3321 }}
 					zoom={15}
 					scaleControl
