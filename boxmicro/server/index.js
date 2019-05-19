@@ -33,7 +33,7 @@ const Polygon = mongoose.model("Polygon", {
 app.get("/", function(req, res) {
 	res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
-
+//save posted gps polygon to DB
 app.post("/gps", function(req, res) {
 	console.log("param", req.body);
 	let polygon = new Polygon({
@@ -50,10 +50,19 @@ app.post("/gps", function(req, res) {
 		}
 	});
 });
+// return all gps polygons
 app.get("/gps", async (req, res) => {
 	let polygons = await Polygon.find();
 	console.log("coords returned for get", polygons);
 	res.send({ data: polygons });
+});
+
+//Delete all entries in DB
+app.all("/reset_db", (req, res) => {
+	console.log("resetting DB");
+	Polygon.deleteMany({}).then(data => {
+		res.redirect("/");
+	});
 });
 
 mongoose.connection.once("open", function() {
