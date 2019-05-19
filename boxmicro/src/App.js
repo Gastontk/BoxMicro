@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import "./App.css";
 import MapPage from "./Components/mapPage";
+import Location from "./Components/getLocation";
+import { geolocated } from "react-geolocated";
+
 import GoogleApiWrapper from "./Components/mapPage";
 
 class App extends Component {
@@ -11,6 +14,7 @@ class App extends Component {
 			toBeMappedFromServer: []
 		};
 	}
+
 	sendPolygonToServer = async data => {
 		let servresp = await fetch("/gps", {
 			method: "POST",
@@ -24,7 +28,7 @@ class App extends Component {
 
 	componentDidMount() {
 		console.log("componentDidMount", this.state);
-		fetch("/gps")
+		fetch("http://gastonkennedy.com:4200/gps")
 			.then(response => {
 				return response.json();
 			})
@@ -33,13 +37,20 @@ class App extends Component {
 				this.setState({
 					toBeMappedFromServer: data1.data
 				});
+			})
+			.catch(err => {
+				console.log(err);
 			});
+		setTimeout(() => {
+			console.log("Location available", geolocated.isGeolocationAvailable);
+		}, 4000);
 	}
 	// postGPS('hello')
 	render() {
 		return (
 			<div className="App">
 				<h1>This is the app.js page</h1>
+				<Location />
 				<MapPage
 					// onClick={this.postGPS}
 					sendPolygonToServer={this.sendPolygonToServer}

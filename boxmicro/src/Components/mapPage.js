@@ -42,7 +42,9 @@ class DrawingMap extends React.Component {
 					"https://developers.google.com/maps/documentation/javascript/examples/full/images/parking.png"
 			},
 			polygonOptions: {
-				fillColor: "#00FF0"
+				fillColor: "#00FF0",
+				icon:
+					"https://developers.google.com/maps/documentation/javascript/examples/full/images/parking.png"
 			},
 			map: map
 		});
@@ -73,6 +75,7 @@ class DrawingMap extends React.Component {
 			markers = [];
 			// For each place, get the icon, name and location.
 			var bounds = new google.maps.LatLngBounds();
+			console.log("bounds", bounds);
 			places.forEach(function(place) {
 				if (!place.geometry) {
 					console.log("Returned place contains no geometry");
@@ -234,7 +237,7 @@ class DrawingMap extends React.Component {
 				infowindow.open(Map, marker);
 				setTimeout(function() {
 					infowindow.close();
-				}, 3000);
+				}, 5000);
 			});
 
 			infowindow.open(Map, marker);
@@ -305,7 +308,7 @@ class DrawingMap extends React.Component {
 				path: plygon,
 				geodesic: true,
 				strokeColor: "#00ff00",
-				fillColor: legal.legal ? "#ff0000" : "#00ff00",
+				fillColor: legal.legal ? "#00ff00" : "#ff0000",
 				strokeOpacity: 1.0,
 				strokeWeight: 2
 			});

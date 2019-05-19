@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const bodyParser = require("body-parser");
-
+//cors
+const cors = require("cors");
 const mongoose = require("mongoose");
 
 mongoose.connect(
@@ -14,6 +14,7 @@ app.use(express.static(path.join(__dirname, "../build")));
 app.use(express.static(path.join(__dirname, "/src")));
 
 app.use(express.json());
+app.use(cors());
 // app.use(express.urlencoded({ extended: true }));
 
 const Todo = mongoose.model("Todo", {
