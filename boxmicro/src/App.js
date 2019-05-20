@@ -38,7 +38,7 @@ class App extends Component {
 	componentWillMount(state) {
 		console.log("componentWillMount", this.state);
 
-		this.statgetPolygons();
+		this.state.getPolygons();
 		// fetch("http://gastonkennedy.com:4200/gps")
 		// 	.then(response => {
 		// 		return response.json();
