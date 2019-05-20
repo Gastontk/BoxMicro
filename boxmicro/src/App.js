@@ -11,12 +11,13 @@ class App extends Component {
 		super(props);
 		this.data = [];
 		this.state = {
-			toBeMappedFromServer: []
+			toBeMappedFromServer: null
 		};
+		this.getPolygons= this.getPolygons.bind(this)
 	}
 
 	sendPolygonToServer = async data => {
-		let servresp = await fetch("/gps", {
+		let servresp = await fetch("http://gastonkennedy.com:4200/gps", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -25,38 +26,47 @@ class App extends Component {
 		});
 		console.log("response", servresp.data);
 	};
+	getPolygons  = async ()=>{
+	console.log("starting async");
+	const response = await fetch("http://gastonkennedy.com:4200/gps");
+	const polygons = await response.json();
+	console.log("polygons", polygons.data);
+	this.setState({
+		toBeMappedFromServer: polygons.data
+	});
+}
+	componentWillMount(state) {
+		console.log("componentWillMount", this.state);
 
-	componentDidMount() {
-		console.log("componentDidMount", this.state);
-		fetch("http://gastonkennedy.com:4200/gps")
-			.then(response => {
-				return response.json();
-			})
-			.then(data1 => {
-				console.log("data", data1.data);
-				this.setState({
-					toBeMappedFromServer: data1.data
-				});
-			})
-			.catch(err => {
-				console.log(err);
-			});
-		setTimeout(() => {
-			console.log("Location available", geolocated.isGeolocationAvailable);
-		}, 4000);
+		this.git statgetPolygons();
+		// fetch("http://gastonkennedy.com:4200/gps")
+		// 	.then(response => {
+		// 		return response.json();
+		// 	})
+		// 	.then(data1 => {
+		// 		console.log("data", data1.data);
+		// 		this.setState({
+		// 			toBeMappedFromServer: data1.data
+		// 		});
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err);
+		// 	});
 	}
 	// postGPS('hello')
 	render() {
 		return (
 			<div className="App">
-				<h1>This is the app.js page</h1>
 				<Location />
-				<MapPage
-					// onClick={this.postGPS}
-					sendPolygonToServer={this.sendPolygonToServer}
-					toMapData={this.data}
-					toBeMappedFromServer={this.state.toBeMappedFromServer}
-				/>
+				{this.state.toBeMappedFromServer ? (
+					<MapPage
+						sendPolygonToServer={this.sendPolygonToServer}
+						toMapData={this.data}
+						toBeMappedFromServer={this.state.toBeMappedFromServer}
+					/>
+				) : (
+					<h1>Loading</h1>
+				)}
 			</div>
 		);
 	}

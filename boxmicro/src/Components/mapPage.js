@@ -330,6 +330,7 @@ class DrawingMap extends React.Component {
 
 					<div id="legals">
 						<input
+							style={{ Align: "left" }}
 							type="radio"
 							name="legal"
 							value="legal"
@@ -340,6 +341,7 @@ class DrawingMap extends React.Component {
 						Legal
 						<br />
 						<input
+							style={{ align: "left" }}
 							type="radio"
 							name="legal"
 							value="prohibited"
@@ -363,6 +365,7 @@ class DrawingMap extends React.Component {
 						placeholder="search for a city"
 					/>
 				</div>
+
 				<Map
 					style={{
 						width: "80%",
