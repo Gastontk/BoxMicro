@@ -1,10 +1,6 @@
 import React from "react";
 import GOOGLE_API_KEY from "../Keys/keys";
-import {
-	Map,
-	GoogleApiWrapper,
-
-} from "google-maps-react"; //	Polygon,Marker,Places,SearchBox, InfoWindow
+import { Map, GoogleApiWrapper } from "google-maps-react"; //	Polygon,Marker,Places,SearchBox, InfoWindow
 
 class DrawingMap extends React.Component {
 	constructor(props) {
@@ -318,24 +314,23 @@ class DrawingMap extends React.Component {
 				<div>
 					<div>
 						<h2>Square Feet</h2>
-						<input type="text" id="sqfeet" placeholder="value goes here" />
-						<br />
-						<br />
+						<input type="text" id="sqfeet" placeholder="draw a polygon to see" />
 					</div>
-					<h2>Mark Legal or Prohibited</h2>
+					<h2>Are You Marking Legal or Prohibited Parking?</h2>
 
 					<div id="legals">
 						<input
-							style={{ Align: "left" }}
+							style={{ align: "left" }}
 							type="radio"
 							name="legal"
 							value="legal"
 							id="isLegal"
 							// onClick={this.clickLegalHandler}
 							defaultChecked
-						/>{" "}
+						/>
+						{"   "}
 						Legal
-						<br />
+						{"   "}
 						<input
 							style={{ align: "left" }}
 							type="radio"
@@ -352,22 +347,26 @@ class DrawingMap extends React.Component {
 				</div>
 				<br />
 				<div id="">
-					<label style={{ color: "green", fontSize: "20pt" }}>Search Bar</label>
+					<label style={{ color: "rgb(84, 116, 171)", fontSize: "20pt" }}>
+						Search Bar
+					</label>
 					<br />
 					<input
-						style={{ border: "solid green 6px" }}
+						style={{ border: "solid rgb(84, 116, 171) 2px" }}
 						type="text"
 						id="searchWindow"
-						placeholder="search for a city"
+						placeholder="search for place or city"
 					/>
 				</div>
 
 				<Map
+					className="map"
 					style={{
-						width: "80%",
-						height: "80%",
-						marginLeft: "10%",
-						border: "solid green 8px"
+						width: "89%%",
+						marginLeft: "5%",
+						marginRight: "5%",
+						height: "700px",
+						border: "inset rgb(84, 116, 171) 3px"
 					}}
 					google={window.google}
 					onReady={this.initMap}

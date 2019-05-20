@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import NavBar from "./Components/header.jsx"
 import MapPage from "./Components/mapPage";
 import Location from "./Components/getLocation";
 // import { geolocated } from "react-geolocated";
@@ -35,7 +36,9 @@ class App extends Component {
 	componentWillMount(state) {
 		console.log("componentWillMount", this.state);
 
-		this.getPolygons();
+		this.getPolygons().catch(err => {
+			console.log("there was an error getting polygons", err);
+		});
 		// fetch("http://gastonkennedy.com:4200/gps")
 		// 	.then(response => {
 		// 		return response.json();
@@ -53,18 +56,26 @@ class App extends Component {
 	// postGPS('hello')
 	render() {
 		return (
-			<div className="App">
-				<Location />
-				{this.state.toBeMappedFromServer ? (
-					<MapPage
-						sendPolygonToServer={this.sendPolygonToServer}
-						toMapData={this.data}
-						toBeMappedFromServer={this.state.toBeMappedFromServer}
-					/>
-				) : (
-					<h1>Loading</h1>
-				)}
-			</div>
+			<React.Fragment>
+				<div className="bg-image" />
+				
+				<div className="App ">
+					{/* <Location /> */}
+					{this.state.toBeMappedFromServer ? (
+						<React.Fragment>
+						<NavBar />
+						<MapPage
+							// style={{ height: "80%" }}
+							sendPolygonToServer={this.sendPolygonToServer}
+							toMapData={this.data}
+							toBeMappedFromServer={this.state.toBeMappedFromServer}
+						/>
+						</React.Fragment>
+					) : (
+						<h1 className="App-logo">Loading map data</h1>
+					)}
+				</div>
+			</React.Fragment>
 		);
 	}
 }
