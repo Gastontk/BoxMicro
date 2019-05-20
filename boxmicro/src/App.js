@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import "./App.css";
 import MapPage from "./Components/mapPage";
 import Location from "./Components/getLocation";
-import { geolocated } from "react-geolocated";
+// import { geolocated } from "react-geolocated";
 
-import GoogleApiWrapper from "./Components/mapPage";
+// import GoogleApiWrapper from "./Components/mapPage";
 
 class App extends Component {
 	constructor(props) {
@@ -13,7 +13,7 @@ class App extends Component {
 		this.state = {
 			toBeMappedFromServer: null
 		};
-		this.getPolygons= this.getPolygons.bind(this)
+		this.getPolygons = this.getPolygons.bind(this);
 	}
 
 	sendPolygonToServer = async data => {
@@ -24,21 +24,18 @@ class App extends Component {
 			},
 			body: JSON.stringify(data)
 		});
-		console.log("response", servresp.data);
 	};
-	getPolygons  = async ()=>{
-	console.log("starting async");
-	const response = await fetch("http://gastonkennedy.com:4200/gps");
-	const polygons = await response.json();
-	console.log("polygons", polygons.data);
-	this.setState({
-		toBeMappedFromServer: polygons.data
-	});
-}
+	getPolygons = async () => {
+		const response = await fetch("http://gastonkennedy.com:4200/gps");
+		const polygons = await response.json();
+		this.setState({
+			toBeMappedFromServer: polygons.data
+		});
+	};
 	componentWillMount(state) {
 		console.log("componentWillMount", this.state);
 
-		this.state.getPolygons();
+		this.getPolygons();
 		// fetch("http://gastonkennedy.com:4200/gps")
 		// 	.then(response => {
 		// 		return response.json();

@@ -2,13 +2,9 @@ import React from "react";
 import GOOGLE_API_KEY from "../Keys/keys";
 import {
 	Map,
-	InfoWindow,
 	GoogleApiWrapper,
-	Polygon,
-	Marker,
-	Places,
-	SearchBox
-} from "google-maps-react";
+
+} from "google-maps-react"; //	Polygon,Marker,Places,SearchBox, InfoWindow
 
 class DrawingMap extends React.Component {
 	constructor(props) {
